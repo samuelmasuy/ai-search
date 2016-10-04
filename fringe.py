@@ -1,5 +1,5 @@
 """
-Fringe definition for each algorithm.
+Fringe defintion and Fringe specific definition for each algorithm.
 """
 from collections import deque
 from Queue import PriorityQueue
@@ -7,6 +7,7 @@ from Queue import PriorityQueue
 
 class Fringe(object):
     """Define base operation of the fringe"""
+
     def __init__(self, goal, fringe):
         self.fringe = fringe
         self.goal = goal
@@ -33,6 +34,7 @@ class AStarFringe(Fringe):
     Define fringe for a* algorithm.
     We use a PriorityQueue as the fringe data structure.
     """
+
     def __init__(self, start, goal):
         super(AStarFringe, self).__init__(goal, PriorityQueue())
         start.cost = start.h(self.goal)
@@ -57,6 +59,7 @@ class BestFringe(Fringe):
     Define fringe for best first search algorithm.
     We use a PriorityQueue as the fringe data structure.
     """
+
     def __init__(self, start, goal):
         super(BestFringe, self).__init__(goal, PriorityQueue())
         start.cost = start.h(self.goal)
@@ -78,6 +81,7 @@ class DFSFringe(Fringe):
     Define fringe for depth first search algorithm.
     We use a deque as the fringe data structure.
     """
+
     def __init__(self, start, goal):
         super(DFSFringe, self).__init__(goal, deque())
         self.fringe.append(start)
@@ -97,6 +101,7 @@ class BFSFringe(Fringe):
     Define fringe for breath first search algorithm.
     We use a deque as the fringe data structure.
     """
+
     def __init__(self, start, goal):
         super(BFSFringe, self).__init__(goal, deque())
         self.fringe.append(start)
@@ -108,4 +113,4 @@ class BFSFringe(Fringe):
         return self.fringe.popleft()
 
     def put(self, parent, child):
-        self.fringe.appendleft(child) # prepend element to the deque.
+        self.fringe.appendleft(child)  # prepend element to the deque.

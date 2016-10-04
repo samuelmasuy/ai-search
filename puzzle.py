@@ -1,5 +1,6 @@
 """
-State definition, and specific puzzle definition for 8-Puzzle.
+State definition, and specific puzzle state definition for 8-Puzzle
+particularly. Definition of heuristics for 8-puzzle.
 """
 import math
 
@@ -16,6 +17,7 @@ class State(object):
         self.cost = None
         self.total_cost = None
         if parent:
+            # make sure the heuristic propagates to the child
             self.heuristic = parent.heuristic
         else:
             self.heuristic = heuristic
@@ -29,13 +31,13 @@ class State(object):
         pass
 
 
-class State_Puzzle(State):
+class StatePuzzle(State):
     """
     8-Puzzle specific state. Defines rules of 8-Puzzle, and some heuristics.
     """
 
     def __init__(self, values, parent, heuristic=None):
-        super(State_Puzzle, self).__init__(values, parent, heuristic)
+        super(StatePuzzle, self).__init__(values, parent, heuristic)
         # add heuristic here.
         if self.heuristic == "manhattan":
             self.h = self.manhattan_heuristic
@@ -55,15 +57,15 @@ class State_Puzzle(State):
         Note: The child state includes the move.
         """
         res = []
-        ind = self.values.index(0)
-        if not self.is_top(ind):
-            res.append(State_Puzzle(self._move_up(self.values, ind), self))
-        if not self.is_bottom(ind):
-            res.append(State_Puzzle(self._move_down(self.values, ind), self))
-        if not self.is_left(ind):
-            res.append(State_Puzzle(self._move_left(self.values, ind), self))
-        if not self.is_right(ind):
-            res.append(State_Puzzle(self._move_right(self.values, ind), self))
+        index = self.values.index(0)
+        if not self.is_top(index):
+            res.append(StatePuzzle(self._move_up(self.values, index), self))
+        if not self.is_bottom(index):
+            res.append(StatePuzzle(self._move_down(self.values, index), self))
+        if not self.is_left(index):
+            res.append(StatePuzzle(self._move_left(self.values, index), self))
+        if not self.is_right(index):
+            res.append(StatePuzzle(self._move_right(self.values, index), self))
         return res
 
     def __str__(self):
@@ -127,44 +129,44 @@ class State_Puzzle(State):
     # I borrowed this code to have a more efficient way and quicker     #
     # way to check the neighbors in a grid using the python's tuple     #
     # data structure.                                                   #
-    # My original consisted of making the tuple representing the grid   #
-    # a 2-D array, checking if the move is valid, make the move,        #
+    # My original code consisted of making the tuple representing the   #
+    # grid a 2-D array, checking if the move is valid, make the move,   #
     # convert it back to 1-D array and then transforming the array to a #
     # tuple.                                                            #
     # Instead this solution is only focusing on the index of the tuple. #
     #####################################################################
-    def is_top(self, ind):
-        return ind < 3
+    def is_top(self, index):
+        return index < 3
 
-    def is_bottom(self, ind):
-        return ind > 5
+    def is_bottom(self, index):
+        return index > 5
 
-    def is_left(self, ind):
-        return ind in [0, 3, 6]
+    def is_left(self, index):
+        return index in [0, 3, 6]
 
-    def is_right(self, ind):
-        return ind in [2, 5, 8]
+    def is_right(self, index):
+        return index in [2, 5, 8]
 
-    def _move_up(self, p, ind):
+    def _move_up(self, p, index):
         """exchange blank position with the tile above """
         _p = list(p)
-        _p[ind], _p[ind - 3] = _p[ind - 3], _p[ind]
+        _p[index], _p[index - 3] = _p[index - 3], _p[index]
         return tuple(_p)
 
-    def _move_down(self, p, ind):
+    def _move_down(self, p, index):
         """exchange blank position with the tile below"""
         _p = list(p)
-        _p[ind], _p[ind + 3] = _p[ind + 3], _p[ind]
+        _p[index], _p[index + 3] = _p[index + 3], _p[index]
         return tuple(_p)
 
-    def _move_left(self, p, ind):
+    def _move_left(self, p, index):
         """exchange blank position with the tile on the left"""
         _p = list(p)
-        _p[ind], _p[ind - 1] = _p[ind - 1], _p[ind]
+        _p[index], _p[index - 1] = _p[index - 1], _p[index]
         return tuple(_p)
 
-    def _move_right(self, p, ind):
+    def _move_right(self, p, index):
         """exchange blank position with the tile on the right"""
         _p = list(p)
-        _p[ind], _p[ind + 1] = _p[ind + 1], _p[ind]
+        _p[index], _p[index + 1] = _p[index + 1], _p[index]
         return tuple(_p)
