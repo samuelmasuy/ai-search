@@ -17,32 +17,37 @@ DIFFICULTY_START = {
 }
 
 
-class Solver(object):
-    def __init__(self, start, goal, algorithm):
-        self.visited = set()  # closed list
-        # set fringe according to the algorithm chosen
-        if algorithm == "astar":
-            self.fringe = AStarFringe(start, goal)
-        elif algorithm == "best":
-            self.fringe = BestFringe(start, goal)
-        elif algorithm == "bfs":
-            self.fringe = BFSFringe(start, goal)
-        elif algorithm == "dfs":
-            self.fringe = DFSFringe(start, goal)
+def get_fringe(start, goal, algorithm):
+    """Get fringe according to the algorithm chosen"""
+    if algorithm == "astar":
+        fringe = AStarFringe(start, goal)
+    elif algorithm == "best":
+        fringe = BestFringe(start, goal)
+    elif algorithm == "bfs":
+        fringe = BFSFringe(start, goal)
+    elif algorithm == "dfs":
+        fringe = DFSFringe(start, goal)
+    else:
+        raise Exception("Chosen algorithm is not implemented.")
+    return fringe
 
-    def solve(self):
-        """Implement generic search algorithm."""
-        while (self.fringe.is_not_empty()):
-            current = self.fringe.get()
 
-            if self.fringe.is_goal(current):
-                return current, len(self.visited)
+def search(start, goal, algorithm):
+    """Implement generic search algorithm."""
+    fringe = get_fringe(start, goal, algorithm)
+    visited = set()  # closed list
+    while (fringe.is_not_empty()):
+        current = fringe.get()
 
-            for n in current.neighbors():
-                if n.values not in self.visited:
-                    self.visited.add(n.values)
-                    self.fringe.put(current, n)
-        raise Exception("Goal not reachable")
+        if current.values == goal:
+            return current, len(visited)
+
+        for n in current.neighbors():
+            if n.values not in visited:
+                visited.add(n.values)
+                fringe.put(current, n)
+    raise Exception("Goal not reachable")
+
 
 
 def reconstruct_path(node):
@@ -135,10 +140,9 @@ if __name__ == '__main__':
     print "Goal state is: {goal}".format(goal=goal)
     print "-------------------------------------\n"
 
-    # define solver, and solve the puzzle
-    solver = Solver(start_state, goal, args.algorithm)
+    # Solve the puzzle
     start = time.time()
-    solution_node, visited_nodes_len = solver.solve()
+    solution_node, visited_nodes_len = search(start_state, goal, args.algorithm)
     elapsed = (time.time() - start)
 
     print "{algo} - Solved in {elapsed:.4f} seconds\n".format(

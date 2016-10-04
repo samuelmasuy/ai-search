@@ -120,19 +120,24 @@ class StatePuzzle(State):
         return max(
             self.manhattan_heuristic(goal), self.hamming_heuristic(goal))
 
-    #####################################################################
-    # The following private methods (starting with _) are an adaptation #
-    # from: http://stackoverflow.com/a/25956328                         #
-    # The purpose of this code is to define the rules of a 8*8 grid.    #
-    # I borrowed this code to have a more efficient way and quicker     #
-    # way to check the neighbors in a grid using the python's tuple     #
-    # data structure.                                                   #
-    # My original code consisted of making the tuple representing the   #
-    # grid a 2-D array, checking if the move is valid, make the move,   #
-    # convert it back to 1-D array and then transforming the array to a #
-    # tuple.                                                            #
-    # Instead this solution is only focusing on the index of the tuple. #
-    #####################################################################
+    def other_heuristic(self, goal):
+        """
+        """
+        pass
+
+    ######################################################################
+    # The following private methods (starting with _) are an adaptation  #
+    # from: http://stackoverflow.com/a/25956328                          #
+    # The purpose of this code is to define the rules of a 8Puzzle grid. #
+    # I borrowed most of th code to have a more efficient way and quicker#
+    # way to check the neighbors in a grid using the python's tuple      #
+    # data structure.                                                    #
+    # My original code consisted of making the tuple representing the    #
+    # grid a 2-D array, checking if the move is valid, make the move,    #
+    # convert it back to 1-D array and then transforming the array to a  #
+    # tuple.                                                             #
+    # Instead this solution is only focusing on the index of the tuple.  #
+    ######################################################################
     def is_top(self, index):
         return index < 3
 
@@ -140,10 +145,10 @@ class StatePuzzle(State):
         return index > 5
 
     def is_left(self, index):
-        return index in [0, 3, 6]
+        return index in (0, 3, 6)
 
     def is_right(self, index):
-        return index in [2, 5, 8]
+        return index in (2, 5, 8)
 
     def _move_up(self, p, index):
         """exchange blank position with the tile above """
