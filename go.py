@@ -1,3 +1,6 @@
+"""
+Main program, and generic search.
+"""
 import argparse
 import time
 

@@ -1,3 +1,6 @@
+"""
+Fringe definition for each algorithm.
+"""
 from collections import deque
 from Queue import PriorityQueue
 

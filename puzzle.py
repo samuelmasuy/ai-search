@@ -1,3 +1,6 @@
+"""
+State definition, and specific puzzle definition for 8-Puzzle.
+"""
 import math
 
 
