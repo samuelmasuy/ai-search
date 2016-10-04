@@ -53,20 +53,18 @@ class StatePuzzle(State):
 
     def neighbors(self):
         """
-        Return children states where a valid move is possible.
+        Generator that generates the children states where a valid move is possible.
         Note: The child state includes the move.
         """
-        res = []
         index = self.values.index(0)
         if not self.is_top(index):
-            res.append(StatePuzzle(self._move_up(self.values, index), self))
+            yield StatePuzzle(self._move_up(self.values, index), self)
         if not self.is_bottom(index):
-            res.append(StatePuzzle(self._move_down(self.values, index), self))
+            yield StatePuzzle(self._move_down(self.values, index), self)
         if not self.is_left(index):
-            res.append(StatePuzzle(self._move_left(self.values, index), self))
+            yield StatePuzzle(self._move_left(self.values, index), self)
         if not self.is_right(index):
-            res.append(StatePuzzle(self._move_right(self.values, index), self))
-        return res
+            yield StatePuzzle(self._move_right(self.values, index), self)
 
     def __str__(self):
         """

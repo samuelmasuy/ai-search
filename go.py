@@ -144,7 +144,7 @@ if __name__ == '__main__':
     print "{algo} - Solved in {elapsed:.4f} seconds\n".format(
         algo=args.algorithm, elapsed=elapsed)
 
-    for count, node in enumerate(reconstruct_path(solution_node), 1):
+    for count, node in enumerate(reversed(list(reconstruct_path(solution_node))), 1):
         if args.verbose:
             print "-------------------------------------"
             print count

@@ -43,8 +43,10 @@ optional arguments:
   --start START START START START START START START START START
                         Write the 8-Puzzle start state you would like to
                         solve. Integers between 1 and 8, blank represented
-                        with B.
-
+                        with B. Default start state:
+						1	2	3
+						4		5
+						7	6	8
   -v, --verbose
 						Increase output verbosity. Will show the path to the
                         goal.
