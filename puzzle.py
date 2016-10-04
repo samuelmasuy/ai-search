@@ -9,6 +9,7 @@ class State(object):
     Base state, that defines heuristic use and the method that a State
     need to implement.
     """
+
     def __init__(self, values, parent, heuristic=None):
         self.parent = parent
         self.values = values
@@ -29,8 +30,13 @@ class State(object):
 
 
 class State_Puzzle(State):
+    """
+    8-Puzzle specific state. Defines rules of 8-Puzzle, and some heuristics.
+    """
+
     def __init__(self, values, parent, heuristic=None):
         super(State_Puzzle, self).__init__(values, parent, heuristic)
+        # add heuristic here.
         if self.heuristic == "manhattan":
             self.h = self.manhattan_heuristic
         elif self.heuristic == "hamming":
@@ -44,20 +50,27 @@ class State_Puzzle(State):
         return 0
 
     def neighbors(self):
+        """
+        Return children states where a valid move is possible.
+        Note: The child state includes the move.
+        """
         res = []
         ind = self.values.index(0)
-        if not self._top(ind):
+        if not self.is_top(ind):
             res.append(State_Puzzle(self._move_up(self.values, ind), self))
-        if not self._bottom(ind):
+        if not self.is_bottom(ind):
             res.append(State_Puzzle(self._move_down(self.values, ind), self))
-        if not self._left(ind):
+        if not self.is_left(ind):
             res.append(State_Puzzle(self._move_left(self.values, ind), self))
-        if not self._right(ind):
+        if not self.is_right(ind):
             res.append(State_Puzzle(self._move_right(self.values, ind), self))
         return res
 
-
     def __str__(self):
+        """
+        Define the representation (string) of a state.
+        We chose to representate the state, as it would look in real life.
+        """
         ret = ""
         cells = int(math.sqrt(len(self.values)))
         for count, val in enumerate(self.values):
@@ -104,8 +117,8 @@ class State_Puzzle(State):
         Compute max between the manhattan heuristic and the hamming heuristic.
         Combining heuristics can achieve higher accuracy.
         """
-        return max(self.manhattan_heuristic(goal), self.hamming_heuristic(goal))
-        # return self.manhattan_heuristic(goal) + self.hamming_heuristic(goal)
+        return max(
+            self.manhattan_heuristic(goal), self.hamming_heuristic(goal))
 
     #####################################################################
     # The following private methods (starting with _) are an adaptation #
@@ -120,16 +133,16 @@ class State_Puzzle(State):
     # tuple.                                                            #
     # Instead this solution is only focusing on the index of the tuple. #
     #####################################################################
-    def _top(self, ind):
+    def is_top(self, ind):
         return ind < 3
 
-    def _bottom(self, ind):
+    def is_bottom(self, ind):
         return ind > 5
 
-    def _left(self, ind):
+    def is_left(self, ind):
         return ind in [0, 3, 6]
 
-    def _right(self, ind):
+    def is_right(self, ind):
         return ind in [2, 5, 8]
 
     def _move_up(self, p, ind):
