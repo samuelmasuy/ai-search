@@ -34,7 +34,7 @@ def get_fringe(start, goal, algorithm):
 
 def search(start, goal, algorithm):
     """Implement generic search algorithm."""
-    fringe = get_fringe(start, goal, algorithm)
+    fringe = get_fringe(start, goal, algorithm)  # open list
     visited = set()  # closed list
     while (fringe.is_not_empty()):
         current = fringe.get()
