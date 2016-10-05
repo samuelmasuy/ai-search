@@ -93,7 +93,7 @@ class DFSFringe(Fringe):
         return self.fringe.popleft()
 
     def put(self, parent, child):
-        self.fringe.append(child)
+        self.fringe.appendleft(child)  # prepend element to the deque.
 
 
 class BFSFringe(Fringe):
@@ -113,4 +113,4 @@ class BFSFringe(Fringe):
         return self.fringe.popleft()
 
     def put(self, parent, child):
-        self.fringe.appendleft(child)  # prepend element to the deque.
+        self.fringe.append(child)
