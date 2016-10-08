@@ -1,6 +1,6 @@
 """
 State definition, and specific puzzle state definition for 8-Puzzle
-particularly. Definition of heuristics for 8-puzzle.
+articularly. Definition of heuristics for 8-puzzle.
 """
 import math
 
@@ -87,7 +87,8 @@ class State8Puzzle(State):
     def manhattan_heuristic(self, goal):
         """
         Compute manhattan heuristic.
-        The Manhattan Distance is the distance between two points measured along axes at right angles.
+        The Manhattan Distance is the distance between two points measured
+        along axes at right angles.
         """
         return sum(abs(a - b) for a, b in zip(self.values, goal) if a != 0)
 
@@ -103,8 +104,9 @@ class State8Puzzle(State):
         Invalid Heuristic: Variant of Nilsson's Sequence Score.
         h(n) = P(n) + kS(n)
         P(n): the Manhattan Distance of each tile from its proper position.
-        S(n): the sequence score obtained by checking around the non-central (goal blank tile) tiles in turn, allotting 2
-        for every tile not followed by its proper successor and 1 in case that the center is not empty.
+        S(n): the sequence score obtained by checking around the non-central
+        (goal blank tile) tiles in turn, allotting 2 for every tile not
+        followed by its proper successor and 1 in case that the center is not empty.
         k: constant
         """
         k = 88
@@ -140,10 +142,13 @@ class State8Puzzle(State):
 
     def linear_conflict(self, goal):
         """
-        Linear conflict heuristic, one tile must move up or down to allow the other to pass by and then back up
-        add two moves to the manhattan distance.
+        Linear conflict heuristic, one tile must move up or down to allow the other to
+        pass by and then back up add two moves to the manhattan distance.
         """
-        return self.manhattan_heuristic(goal) + self._vertical_linear_conflict(goal) + self._horizontal_linear_conflict(goal)
+        return sum(
+            self.manhattan_heuristic(goal),
+            self._vertical_linear_conflict(goal),
+            self._horizontal_linear_conflict(goal))
 
     def _vertical_linear_conflict(self, goal):
         conflict = 0
@@ -157,11 +162,10 @@ class State8Puzzle(State):
                     if (cell_value > max_val):
                         max_val = cell_value
                     else:
-                        # The linear conflict adds at least two moves to the Manhattan Distance of the
-                        # two conflicting tiles, by forcing them to surround one another.
+                        # The linear conflict adds at least two moves to the Manhattan Distance
+                        # of the two conflicting tiles, by forcing them to surround one another.
                         conflict += 2
         return conflict
-
 
     def _horizontal_linear_conflict(self, goal):
         conflict = 0
@@ -174,8 +178,8 @@ class State8Puzzle(State):
                     if (cell_value > max_val):
                         max_val = cell_value
                     else:
-                        # The linear conflict adds at least two moves to the Manhattan Distance of the
-                        # two conflicting tiles, by forcing them to surround one another.
+                        # The linear conflict adds at least two moves to the Manhattan Distance
+                        # of the two conflicting tiles, by forcing them to surround one another.
                         conflict += 2
         return conflict
 
