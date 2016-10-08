@@ -2,6 +2,11 @@
 
 *Explore heuristic search.*
 
+Submitted by: Samuel RRJ Masuy - 26590624
+
+*“I certify that this submission is my original work and meets the Faculty's
+Expectations of Originality”*
+
 ##File structure
 
 In `go.py`:
@@ -13,6 +18,9 @@ In `fringe.py`:
 In `puzzle.py`:
 	State definition, and specific puzzle state definition for 8-Puzzle
 	particularly. Definition of heuristics for 8-puzzle.
+
+**Note:** The name of the heuritics defined below, match the one found in
+`puzzle.py`
 
 ##Usage
 
@@ -61,29 +69,56 @@ Start state is: `(5, 6, 7, 4, 8, B, 3, 2, 1)`
 
 Goal state is: `(1, 2, 3, 8, 4, B, 7, 6, 5)`
 
-| Algorithm    | Heuristic    | Time (s)     | Node to goal | Node visited |
-| ------------ | ------------ | ------------ | ------------ | ------------ |
-| astar        | manhattan    | 0.9343       | 31           | 52495        |
-| astar        | displaced    | 4.2816       | 31           | 162764       |
-| astar        | max          | 1.0431       | 31           | 52504        |
-| astar        | linear       | 4.4095       | 31           | 125207       |
-| astar        | invalid      | 5.3976       | 31           | 166829       |
-| best         | manhattan    | 0.0016       | 45           | 129          |
-| best         | displaced    | 0.0007       | 31           | 79           |
-| best         | max          | 0.0020       | 45           | 129          |
-| best         | linear       | 0.0107       | 77           | 441          |
-| best         | invalid      | 0.0051       | 39           | 203          |
-| dfs          | N/A          | 0.9809       | 64835        | 149154       |
-| bfs          | N/A          | 1.6932       | 31           | 181438       |
+| Algorithm    | Heuristic    | Avg. Time (s) | Node to goal | Node visited |
+| ------------ | ------------ | ------------- | ------------ | ------------ |
+| astar        | manhattan    | 0.9343        | 31           | 52495        |
+| astar        | displaced    | 4.2816        | 31           | 162764       |
+| astar        | max          | 1.0431        | 31           | 52504        |
+| astar        | linear       | 4.4095        | 31           | 125207       |
+| astar        | invalid      | 5.3976        | 31           | 166829       |
+| best         | manhattan    | 0.0016        | 45           | 129          |
+| best         | displaced    | 0.0007        | 31           | 79           |
+| best         | max          | 0.0020        | 45           | 129          |
+| best         | linear       | 0.0107        | 77           | 441          |
+| best         | invalid      | 0.0051        | 39           | 203          |
+| dfs          | N/A          | 0.9809        | 64835        | 149154       |
+| bfs          | N/A          | 1.6932        | 31           | 181438       |
 
 
-**Note:** We chose specific start and goal state to have significant differences in terms of *time*, *node to goal* and *node visited* between the different Algorithms and Heuristics.
+**Note:** We chose specific start and goal state to have significant differences in terms
+of *time*, *node to goal* and *node visited* between the different Algorithms and Heuristics.
 
 **Note:** Test runs used are in a script `runs.sh`
 
+**Note:** To determine the *Average time*, each row in the table is ran 5
+times. In total, 12 * 5 = **60** experiments ran to get theses results.
+
 ### Analysis and Explanation
 
-Hello world.
+We see that `A*`, no matter the heuristic chosen is always finding
+the optimal path. But, we see that `A*` takes in general the most time compared
+to all other Algorithms, and visits more node then `Best-First Search`.
+
+`Best-First Search` only finds the optimal path when given the *displace tiles*
+heuristic. We see that `Best-First Search` takes the least amount of time, no
+matter the heuristic chosen.
+
+`Depth-First Search` is definitly far from the optimal path, it visits a lot of
+nodes. But is faster then `A*` or `Breadth-First Search`.
+
+`Breadth-First Search` finds the optimal path, but is the one that visits the
+most node.
+
+Regarding heuristics, for *Manhattan* and *displaced tiles*, the results are
+quite unexpected. `Best-First Search` performs at its best using *displaced
+tiles*, while `A*` is performing really poorly using the same heuristic. Its
+time to execute and the number of visited node is really poor. We see that
+`A*` performs the best using the *Maximum* heuristic (combination of
+*Manhattan* and *displaced tiles*).
+
+The *invalid* heuristic is not very conclusive in this case, other that, it is
+`A*` worst heuristic. And `Best-First Search` gets its second best result in
+terms of *node to goal*.
 
 ## Sample run using provided goal state
 
