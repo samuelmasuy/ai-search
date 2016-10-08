@@ -23,7 +23,7 @@ class State(object):
             self.heuristic = heuristic
 
     def neighbors(self):
-        """Find all neighbors of a state."""
+        """Generate all neighbors of a state."""
         pass
 
     def h(self, goal):
@@ -31,22 +31,24 @@ class State(object):
         pass
 
 
-class StatePuzzle(State):
+class State8Puzzle(State):
     """
     8-Puzzle specific state. Defines rules of 8-Puzzle, and some heuristics.
     """
 
     def __init__(self, values, parent, heuristic=None):
-        super(StatePuzzle, self).__init__(values, parent, heuristic)
+        super(State8Puzzle, self).__init__(values, parent, heuristic)
         # add heuristic here.
         if self.heuristic == "manhattan":
             self.h = self.manhattan_heuristic
-        elif self.heuristic == "hamming":
-            self.h = self.hamming_heuristic
+        elif self.heuristic == "displaced":
+            self.h = self.displaced_heuristic
         elif self.heuristic == "invalid":
             self.h = self.invalid_heuristic
         elif self.heuristic == "max":
             self.h = self.max_heuristic
+        elif self.heuristic == "linear":
+            self.h = self.linear_conflict
 
     def h(self, goal):
         return 0
@@ -57,14 +59,14 @@ class StatePuzzle(State):
         Note: The child state includes the move.
         """
         index = self.values.index(0)
-        if not self.is_top(index):
-            yield StatePuzzle(self._move_up(self.values, index), self)
-        if not self.is_bottom(index):
-            yield StatePuzzle(self._move_down(self.values, index), self)
-        if not self.is_left(index):
-            yield StatePuzzle(self._move_left(self.values, index), self)
-        if not self.is_right(index):
-            yield StatePuzzle(self._move_right(self.values, index), self)
+        if not _is_top(index):
+            yield State8Puzzle(_move_up(self.values, index), self)
+        if not _is_bottom(index):
+            yield State8Puzzle(_move_down(self.values, index), self)
+        if not _is_left(index):
+            yield State8Puzzle(_move_left(self.values, index), self)
+        if not _is_right(index):
+            yield State8Puzzle(_move_right(self.values, index), self)
 
     def __str__(self):
         """
@@ -87,89 +89,157 @@ class StatePuzzle(State):
         Compute manhattan heuristic.
         The Manhattan Distance is the distance between two points measured along axes at right angles.
         """
-        return sum(abs(a - b) for a, b in zip(self.values, goal))
+        return sum(abs(a - b) for a, b in zip(self.values, goal) if a != 0)
 
-    def hamming_heuristic(self, goal):
+    def displaced_heuristic(self, goal):
         """
-        Compute hamming heuristic (Misplaced tiles).
+        Compute displaced tiles heuristic (Hammming distance).
         Number of tiles that are not in the final position (not counting the blank)
         """
-        return sum(c1 != c2 for c1, c2 in zip(self.values, goal))
+        return sum(a != b for a, b in zip(self.values, goal) if a != 0)
 
     def invalid_heuristic(self, goal):
         """
-        Multiplying an admissible heuristic by a large enough constant K will
-        make a heuristic inadmissible. For example, making K approach infinity
-        will result in A* acting like greedy search. The performance will thus
-        be better every time greedy search works better than A*. An example
-        is where there are many proofs of equal length, where there appears
-        to be no initial headway. In this case, greedy will find a solution
-        fast (sometimes even an optimal solution), while A* can take a very
-        long time!
-
-        Also, in this case the heuristic is inadmissible because h(goal) != 0
+        Invalid Heuristic: Variant of Nilsson's Sequence Score.
+        h(n) = P(n) + kS(n)
+        P(n): the Manhattan Distance of each tile from its proper position.
+        S(n): the sequence score obtained by checking around the non-central (goal blank tile) tiles in turn, allotting 2
+        for every tile not followed by its proper successor and 1 in case that the center is not empty.
+        k: constant
         """
-        K = 8888888
-        return self.hamming_heuristic(goal) + K * K
+        k = 88
+        s = 0
+        goal_blank_index = goal.index(0)
+        start_blank_index = goal.index(0)
+
+        if goal_blank_index != start_blank_index:
+            s += 1
+
+        for i in xrange(len(self.values)):
+            # Check central square.
+            if i == start_blank_index:
+                continue
+
+            if i == len(self.values) - 1:
+                if self.values[0] != goal[0]:
+                    s += 2
+                continue
+
+            if self.values[i + 1] != goal[i + 1]:
+                s += 2
+
+        return self.manhattan_heuristic(goal) + k * s
 
     def max_heuristic(self, goal):
         """
-        Compute max between the manhattan heuristic and the hamming heuristic.
+        Compute max between the manhattan heuristic and the displaced heuristic.
         Combining heuristics can achieve higher accuracy.
         """
         return max(
-            self.manhattan_heuristic(goal), self.hamming_heuristic(goal))
+            self.manhattan_heuristic(goal), self.displaced_heuristic(goal))
 
-    def other_heuristic(self, goal):
+    def linear_conflict(self, goal):
         """
+        Linear conflict heuristic, one tile must move up or down to allow the other to pass by and then back up
+        add two moves to the manhattan distance.
         """
-        pass
+        return self.manhattan_heuristic(goal) + self._vertical_linear_conflict(goal) + self._horizontal_linear_conflict(goal)
 
-    ######################################################################
-    # The following private methods (starting with _) are an adaptation  #
-    # from: http://stackoverflow.com/a/25956328                          #
-    # The purpose of this code is to define the rules of a 8Puzzle grid. #
-    # I borrowed most of th code to have a more efficient way and quicker#
-    # way to check the neighbors in a grid using the python's tuple      #
-    # data structure.                                                    #
-    # My original code consisted of making the tuple representing the    #
-    # grid a 2-D array, checking if the move is valid, make the move,    #
-    # convert it back to 1-D array and then transforming the array to a  #
-    # tuple.                                                             #
-    # Instead this solution is only focusing on the index of the tuple.  #
-    ######################################################################
-    def is_top(self, index):
-        return index < 3
+    def _vertical_linear_conflict(self, goal):
+        conflict = 0
 
-    def is_bottom(self, index):
-        return index > 5
+        for row in xrange(3):
+            max_val = -1
+            for column in xrange(3):
+                cell_value = _get_cell_value(self.values, row, column)
+                # Is the tile in its goal row?
+                if cell_value != 0 and cell_value in _get_range_goal_row_values(goal, row):
+                    if (cell_value > max_val):
+                        max_val = cell_value
+                    else:
+                        # The linear conflict adds at least two moves to the Manhattan Distance of the
+                        # two conflicting tiles, by forcing them to surround one another.
+                        conflict += 2
+        return conflict
 
-    def is_left(self, index):
-        return index in (0, 3, 6)
 
-    def is_right(self, index):
-        return index in (2, 5, 8)
+    def _horizontal_linear_conflict(self, goal):
+        conflict = 0
+        for row in xrange(3):
+            max_val = -1
+            for column in xrange(3):
+                cell_value = _get_cell_value(self.values, row, column)
+                # Is the tile in its goal column?
+                if cell_value != 0 and _get_range_goal_column_values(goal, column):
+                    if (cell_value > max_val):
+                        max_val = cell_value
+                    else:
+                        # The linear conflict adds at least two moves to the Manhattan Distance of the
+                        # two conflicting tiles, by forcing them to surround one another.
+                        conflict += 2
+        return conflict
 
-    def _move_up(self, p, index):
-        """exchange blank position with the tile above """
-        _p = list(p)
-        _p[index], _p[index - 3] = _p[index - 3], _p[index]
-        return tuple(_p)
 
-    def _move_down(self, p, index):
-        """exchange blank position with the tile below"""
-        _p = list(p)
-        _p[index], _p[index + 3] = _p[index + 3], _p[index]
-        return tuple(_p)
+def _get_cell_value(s, row, column):
+    """Helper function to get value in 1-D array (s), given row and column"""
+    return s[row * 3 + column]
 
-    def _move_left(self, p, index):
-        """exchange blank position with the tile on the left"""
-        _p = list(p)
-        _p[index], _p[index - 1] = _p[index - 1], _p[index]
-        return tuple(_p)
 
-    def _move_right(self, p, index):
-        """exchange blank position with the tile on the right"""
-        _p = list(p)
-        _p[index], _p[index + 1] = _p[index + 1], _p[index]
-        return tuple(_p)
+def _get_range_goal_row_values(goal, row):
+    """Helper function to get set of values of row in 1-D array, given a row index"""
+    return goal[row * 3:row * 3 + 3]
+
+
+def _get_range_goal_column_values(goal, column):
+    """Helper function to get set of values of row in 1-D array, given a row index"""
+    return goal[column:column + 1] + goal[column + 3:column + 4] + goal[column + 6:column + 7]
+
+
+#############################################################
+# The purpose of the following functions is to define the   #
+# rules of a 8Puzzle grid.                                  #
+# This solution is only focusing on the index of the tuple, #
+# and therefore not applicable to other kind of grid.       #
+#############################################################
+def _is_top(index):
+    return index < 3
+
+
+def _is_bottom(index):
+    return index > 5
+
+
+def _is_left(index):
+    return index in (0, 3, 6)
+
+
+def _is_right(index):
+    return index in (2, 5, 8)
+
+
+def _move_up(p, index):
+    """exchange blank position with the tile above """
+    _p = list(p)
+    _p[index], _p[index - 3] = _p[index - 3], _p[index]
+    return tuple(_p)
+
+
+def _move_down(p, index):
+    """exchange blank position with the tile below"""
+    _p = list(p)
+    _p[index], _p[index + 3] = _p[index + 3], _p[index]
+    return tuple(_p)
+
+
+def _move_left(p, index):
+    """exchange blank position with the tile on the left"""
+    _p = list(p)
+    _p[index], _p[index - 1] = _p[index - 1], _p[index]
+    return tuple(_p)
+
+
+def _move_right(p, index):
+    """exchange blank position with the tile on the right"""
+    _p = list(p)
+    _p[index], _p[index + 1] = _p[index + 1], _p[index]
+    return tuple(_p)

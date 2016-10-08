@@ -1,59 +1,175 @@
-#8-Puzzle Solver
+#COMP 472: Assignment 1
+
+*Explore heuristic search.*
 
 ##File structure
 
-In go.py:
+In `go.py`:
 	Main program, and generic search.
-In fringe.py:
+
+In `fringe.py`:
 	Fringe defintion and Fringe specific definition for each algorithm.
-In puzzle.py:
+
+In `puzzle.py`:
 	State definition, and specific puzzle state definition for 8-Puzzle
 	particularly. Definition of heuristics for 8-puzzle.
 
 ##Usage
 
-python go.py
+	python go.py
              [-h]
 			 [-a {astar,best,bfs,dfs}]
-             [-t {manhattan,hamming,invalid,max}]
+             [-t {manhattan,displaced,invalid,max, linear}]
              [--start START START START START START START START START START]
              [-d {easy,medium,hard,worst}] [-v]
 
-optional arguments:
-  -h, --help
-						show this help message and exit
+	optional arguments:
+	  -h, --help
+							show this help message and exit
 
-  -a {astar,best,bfs,dfs}
-                        Select the algorithm you want to run. Chose between
-                        astar, best, bfs or dfs.
+	  -a {astar,best,bfs,dfs}
+							Select the algorithm you want to run. Chose between
+							astar, best, bfs or dfs.
 
-  -t {manhattan,hamming,invalid,max}
-                        Select the heuristic you want to apply. Chose between
-                        manhattan, hamming, invalid or max.
+	  -t {manhattan,displaced,invalid,max, linear}
+							Select the heuristic you want to apply. Chose between
+							manhattan, displaced, invalid, linear or max.
 
-  -d {easy,medium,hard,worst}
-                        Select a predifined start state with specific
-                        difficulty. Chose between easy, medium, hard or worst.
-						Note: if this option is selected, --start will be
-						ignored, also goal state is set to:
-						1	2	3
-						8	4
-						7	6	5
+	  -d {easy,medium,hard,worst}
+							Select a predifined start state with specific
+							difficulty. Chose between easy, medium, hard or worst.
+							Note: if this option is selected, --start will be
+							ignored, also goal state is set to:
+							1	2	3
+							8	4
+							7	6	5
 
-  --start START START START START START START START START START
-                        Write the 8-Puzzle start state you would like to
-                        solve. Integers between 1 and 8, blank represented
-                        with B. Default start state:
-						1	2	3
-						4		5
-						7	6	8
-  -v, --verbose
-						Increase output verbosity. Will show the path to the
-                        goal.
+	  --start START START START START START START START START START
+							Write the 8-Puzzle start state you would like to
+							solve. Integers between 1 and 8, blank represented
+							with B. Default start state:
+							1	2	3
+							4		5
+							7	6	8
+	  -v, --verbose
+							Increase output verbosity. Will show the path to the
+							goal.
 
-##Default goal state
+## Test Runs
 
-	1	2	3
-	8		4
-	7	6	5
+Start state is: `(5, 6, 7, 4, 8, B, 3, 2, 1)`
 
+Goal state is: `(1, 2, 3, 8, 4, B, 7, 6, 5)`
+
+| Algorithm    | Heuristic    | Time (s)     | Node to goal | Node visited |
+| ------------ | ------------ | ------------ | ------------ | ------------ |
+| astar        | manhattan    | 0.9343       | 31           | 52495        |
+| astar        | displaced    | 4.2816       | 31           | 162764       |
+| astar        | max          | 1.0431       | 31           | 52504        |
+| astar        | linear       | 4.4095       | 31           | 125207       |
+| astar        | invalid      | 5.3976       | 31           | 166829       |
+| best         | manhattan    | 0.0016       | 45           | 129          |
+| best         | displaced    | 0.0007       | 31           | 79           |
+| best         | max          | 0.0020       | 45           | 129          |
+| best         | linear       | 0.0107       | 77           | 441          |
+| best         | invalid      | 0.0051       | 39           | 203          |
+| dfs          | N/A          | 0.9809       | 64835        | 149154       |
+| bfs          | N/A          | 1.6932       | 31           | 181438       |
+
+
+**Note:** We chose specific start and goal state to have significant differences in terms of *time*, *node to goal* and *node visited* between the different Algorithms and Heuristics.
+
+**Note:** Test runs used are in a script `runs.sh`
+
+### Analysis and Explanation
+
+Hello world.
+
+## Sample run using provided goal state
+
+    Solving using: astar
+    Using Heuristic: manhattan
+    Start state is: (1, 2, 3, 4, 0, 5, 7, 6, 8)
+    Goal state is: (1, 2, 3, 8, 0, 4, 7, 6, 5)
+
+    astar - Solved in 0.0025 seconds
+
+    1.
+     1 | 2 | 3
+     4 | B | 5
+     7 | 6 | 8
+
+     cost: 8 total_cost: 0
+
+  	2.
+     1 | 2 | 3
+     B | 4 | 5
+     7 | 6 | 8
+
+     cost: 8 total_cost: 8
+
+    3.
+     1 | 2 | 3
+     7 | 4 | 5
+     B | 6 | 8
+
+     cost: 9 total_cost: 17
+
+    4.
+     1 | 2 | 3
+     7 | 4 | 5
+     6 | B | 8
+
+    cost: 10 total_cost: 27
+
+    5.
+     1 | 2 | 3
+     7 | 4 | 5
+     6 | 8 | B
+
+    cost: 9 total_cost: 36
+
+    6.
+     1 | 2 | 3
+     7 | 4 | B
+     6 | 8 | 5
+
+    cost: 8 total_cost: 44
+
+    7.
+     1 | 2 | 3
+     7 | B | 4
+     6 | 8 | 5
+
+    cost: 4 total_cost: 48
+
+    8.
+     1 | 2 | 3
+     7 | 8 | 4
+     6 | B | 5
+
+     cost: 10 total_cost: 58
+
+    9.
+     1 | 2 | 3
+     7 | 8 | 4
+     B | 6 | 5
+
+     cost: 9 total_cost: 67
+
+    10.
+     1 | 2 | 3
+     B | 8 | 4
+     7 | 6 | 5
+
+     cost: 8 total_cost: 75
+
+    11.
+     1 | 2 | 3
+     8 | B | 4
+     7 | 6 | 5
+
+     cost: 0 total_cost: 75
+
+      Total nodes to goal: 11
+      Total nodes visited: 186

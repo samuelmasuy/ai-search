@@ -5,7 +5,7 @@ import argparse
 import time
 
 from fringe import AStarFringe, BestFringe, DFSFringe, BFSFringe
-from puzzle import StatePuzzle
+from puzzle import State8Puzzle
 
 DEFAULT_GOAL = (1, 2, 3, 8, 0, 4, 7, 6, 5)
 DIFFICULTY_GOAL = (1, 2, 3, 8, 4, 0, 7, 6, 5)
@@ -51,7 +51,7 @@ def search(start, goal, algorithm):
 
 
 def reconstruct_path(node):
-    """Reconstruct path from the solution node to its parent."""
+    """Generator to reconstruct path from the solution node to its parent."""
     while True:
         if not node:
             break
@@ -94,8 +94,8 @@ def get_cmd_args():
         action="store",
         dest="heuristic",
         default="manhattan",
-        choices=["manhattan", "hamming", "invalid", "max"],
-        help="Select the heuristic you want to apply. Chose between manhattan, hamming, invalid or max."
+        choices=["manhattan", "displaced", "invalid", "max", "linear"],
+        help="Select the heuristic you want to apply. Chose between manhattan, displaced, invalid, linear or max."
     )
     parser.add_argument(
         '--start',
@@ -132,9 +132,9 @@ if __name__ == '__main__':
     # define start state node
     if args.algorithm == 'astar' or args.algorithm == 'best':
         print "Using Heuristic: {heuristic}".format(heuristic=args.heuristic)
-        start_state = StatePuzzle(start, None, args.heuristic)
+        start_state = State8Puzzle(start, None, args.heuristic)
     else:
-        start_state = StatePuzzle(start, None, None)
+        start_state = State8Puzzle(start, None, None)
 
     print "Start state is: {start}".format(start=start)
     print "Goal state is: {goal}".format(goal=goal)
