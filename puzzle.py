@@ -145,10 +145,10 @@ class State8Puzzle(State):
         Linear conflict heuristic, one tile must move up or down to allow the other to
         pass by and then back up add two moves to the manhattan distance.
         """
-        return sum(
+        return sum((
             self.manhattan_heuristic(goal),
             self._vertical_linear_conflict(goal),
-            self._horizontal_linear_conflict(goal))
+            self._horizontal_linear_conflict(goal)))
 
     def _vertical_linear_conflict(self, goal):
         conflict = 0
