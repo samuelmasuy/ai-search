@@ -34,15 +34,12 @@ In `puzzle.py`:
 	optional arguments:
 	  -h, --help
 							show this help message and exit
-
 	  -a {astar,best,bfs,dfs}
 							Select the algorithm you want to run. Chose between
 							astar, best, bfs or dfs.
-
 	  -t {manhattan,displaced,invalid,max, linear}
 							Select the heuristic you want to apply. Chose between
 							manhattan, displaced, invalid, linear or max.
-
 	  -d {easy,medium,hard,worst}
 							Select a predifined start state with specific
 							difficulty. Chose between easy, medium, hard or worst.
@@ -51,7 +48,6 @@ In `puzzle.py`:
 							1	2	3
 							8	4
 							7	6	5
-
 	  --start START START START START START START START START START
 							Write the 8-Puzzle start state you would like to
 							solve. Integers between 1 and 8, blank represented
@@ -59,11 +55,9 @@ In `puzzle.py`:
 							1	2	3
 							4		5
 							7	6	8
-
 	  -b BENCHMARK, --benchmark BENCHMARK
 							Select the number of loops, you want to average on. It
 							will run all algorithms, and output results to a file.
-
 	  -v, --verbose
 							Increase output verbosity. Will show the path to the
 							goal.
