@@ -85,7 +85,7 @@ of *time*, *node to goal* and *node visited* between the different Algorithms an
 **Note:** Test runs used was possible using `--benchmark 500` parameter.
 
 **Note:** To determine the *Average time*, each row in the table were ran 500
-times. In total, 12 * 500 = **600** experiments ran to get theses results.
+times. In total, 12 * 500 = **6000** experiments ran to get theses results.
 It took `4:25:58`, to finish these experiments, on a remote machine.
 
 ### Analysis and Explanation
