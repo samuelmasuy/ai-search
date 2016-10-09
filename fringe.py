@@ -24,10 +24,6 @@ class Fringe(object):
         """Add element to the fringe."""
         pass
 
-    def is_goal(self, n):
-        """Check if n is the goal state."""
-        return n.values == self.goal
-
 
 class AStarFringe(Fringe):
     """
