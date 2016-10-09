@@ -1,4 +1,4 @@
-#COMP 472: Assignment 1
+#AI Search
 
 *Explore heuristic search.*
 
