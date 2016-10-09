@@ -2,11 +2,6 @@
 
 *Explore heuristic search.*
 
-Submitted by: Samuel RRJ Masuy - 26590624
-
-*I certify that this submission is my original work and meets the Faculty's
-Expectations of Originality*
-
 ##File structure
 
 In `go.py`:
