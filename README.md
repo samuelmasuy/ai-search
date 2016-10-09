@@ -4,8 +4,8 @@
 
 Submitted by: Samuel RRJ Masuy - 26590624
 
-*“I certify that this submission is my original work and meets the Faculty's
-Expectations of Originality”*
+*I certify that this submission is my original work and meets the Faculty's
+Expectations of Originality*
 
 ##File structure
 
@@ -29,7 +29,7 @@ In `puzzle.py`:
 			 [-a {astar,best,bfs,dfs}]
              [-t {manhattan,displaced,invalid,max, linear}]
              [--start START START START START START START START START START]
-             [-d {easy,medium,hard,worst}] [-v]
+             [-d {easy,medium,hard,worst}] [-b BENCHMARK] [-v]
 
 	optional arguments:
 	  -h, --help
@@ -59,6 +59,11 @@ In `puzzle.py`:
 							1	2	3
 							4		5
 							7	6	8
+
+	  -b BENCHMARK, --benchmark BENCHMARK
+							Select the number of loops, you want to average on. It
+							will run all algorithms, and output results to a file.
+
 	  -v, --verbose
 							Increase output verbosity. Will show the path to the
 							goal.
@@ -88,10 +93,11 @@ Goal state is: `(1, 2, 3, 8, 4, B, 7, 6, 5)`
 **Note:** We chose specific start and goal state to have significant differences in terms
 of *time*, *node to goal* and *node visited* between the different Algorithms and Heuristics.
 
-**Note:** Test runs used are in a script `runs.sh`
+**Note:** Test runs used was possible using `--benchmark 500` parameter.
 
-**Note:** To determine the *Average time*, each row in the table is ran 5
-times. In total, 12 * 5 = **60** experiments ran to get theses results.
+**Note:** To determine the *Average time*, each row in the table were ran 500
+times. In total, 12 * 500 = **600** experiments ran to get theses results.
+It took `4:25:58`, to finish these experiments, on a remote machine.
 
 ### Analysis and Explanation
 
